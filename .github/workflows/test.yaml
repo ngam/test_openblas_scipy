@@ -52,14 +52,14 @@ jobs:
           mamba install pytest scipy openblas -c ngam --yes
           mamba clean -aqy
           mamba list
-        if [[ ${{ matrix.pysrc }} == "conda" && ${{ matrix.sci }} == "suffix" ]]; then
+        elif [[ ${{ matrix.pysrc }} == "conda" && ${{ matrix.sci }} == "suffix" ]]; then
           mamba update --all --yes
           mamba install pytest scipy openblas --yes
           mamba clean -aqy
           mamba list
-        if [[ ${{ matrix.pysrc }} == "conda" && ${{ matrix.sci }} == "before" ]]; then
+        elif [[ ${{ matrix.pysrc }} == "conda" && ${{ matrix.sci }} == "before" ]]; then
           mamba update --all --yes
-          mamba install pytest scipy openblas==*=*_2* --yes
+          mamba install pytest scipy 'openblas==*=*_2*' --yes
           mamba clean -aqy
           mamba list
         else
