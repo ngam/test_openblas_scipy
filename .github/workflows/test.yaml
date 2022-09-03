@@ -1,0 +1,65 @@
+name: test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency: 
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: true
+      matrix:
+        pysrc: ["conda"]
+        python-version: ["3.7", "3.8", "3.10"]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - 
+      if: ${{ matrix.pysrc == 'system' }}
+      name: Set up Python ${{ matrix.python-version }} from system
+      uses: actions/setup-python@v4.2.0
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    -
+      if: ${{ matrix.pysrc == 'conda' }} 
+      name: Set up Python ${{ matrix.python-version }} from conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniforge-variant: Mambaforge
+        miniforge-version: latest
+        python-version: ${{ matrix.python-version }}
+        mamba-version: "*"
+        channels: conda-forge
+        auto-activate-base: false
+        activate-environment: test
+        auto-update-conda: true
+        channel-priority: strict
+
+    -
+      name: Install other dependencies
+      run: |
+        if [[ ${{ matrix.pysrc }} == "conda" ]]; then
+          mamba update --all --yes
+          mamba install pytest scipy openblas -c ngam --yes
+          mamba clean -aqy
+        else
+          python -m pip install -U pip
+          python -m pip install ".[test]"
+        fi
+
+    -
+      name: Test with pytest
+      run: |
+        pytest --pyargs scipy.linalg.tests.test_decomp_update
