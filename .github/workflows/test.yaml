@@ -15,6 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        sci: ["before", "fortran", "suffix"]
         pysrc: ["conda"]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
 
@@ -44,11 +45,21 @@ jobs:
         channel-priority: strict
 
     -
-      name: Install other dependencies
+      name: Install deps
       run: |
-        if [[ ${{ matrix.pysrc }} == "conda" ]]; then
+        if [[ ${{ matrix.pysrc }} == "conda" && ${{ matrix.sci }} == "fortran" ]]; then
           mamba update --all --yes
           mamba install pytest scipy openblas -c ngam --yes
+          mamba clean -aqy
+          mamba list
+        if [[ ${{ matrix.pysrc }} == "conda" && ${{ matrix.sci }} == "suffix" ]]; then
+          mamba update --all --yes
+          mamba install pytest scipy openblas --yes
+          mamba clean -aqy
+          mamba list
+        if [[ ${{ matrix.pysrc }} == "conda" && ${{ matrix.sci }} == "before" ]]; then
+          mamba update --all --yes
+          mamba install pytest scipy openblas==*=*_2* --yes
           mamba clean -aqy
           mamba list
         else
