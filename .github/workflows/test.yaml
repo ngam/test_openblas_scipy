@@ -70,5 +70,5 @@ jobs:
     -
       name: Test with pytest
       run: |
-        pytest -vv -rA --pyargs scipy.linalg.tests.test_decomp_update
-        pytest -vv -rA --pyargs scipy.linalg.tests.test_lapack
+        pytest --pyargs scipy.linalg.tests.test_decomp_update
+        pytest --pyargs scipy.linalg.tests.test_lapack
