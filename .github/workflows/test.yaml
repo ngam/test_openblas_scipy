@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sci: ["before", "fortran", "suffix"]
+        sci: ["before", "suffix"]  # package no longer available on my channel
         pysrc: ["conda"]
         python-version: ["3.10"]
 
